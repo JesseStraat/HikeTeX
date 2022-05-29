@@ -1,0 +1,106 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{HikeTeX}[2019/10/12 Hike Package]
+\RequirePackage{tikz}
+\RequirePackage{xparse}
+\RequirePackage{relsize}
+\RequirePackage{forloop}
+\RequirePackage{graphicx}
+\RequirePackage[margin=1 in, a4paper]{geometry}
+\usetikzlibrary{arrows.meta,calc,decorations.markings,math,arrows.meta, shapes.arrows}
+
+\newcounter{stripc}
+\newcounter{kruising}
+\setcounter{kruising}{1}
+
+% Stelt de kruispuntcounter in
+\NewDocumentCommand{\setKruising}{ m }{
+	\setcounter{kruising}{#1}
+}
+
+
+% Pijlen
+\tikzset{fontscale/.style = {font=\relsize{#1}}}
+
+% Kruispuntenroute
+\NewDocumentCommand{\pijl}{ m O{2} O{niet} O{0}}{
+	\begin{tikzpicture}[scale=#2]
+		\draw[white, line width = #2] (-1, -1) -- (-1, 1);											% Invisible border
+		\draw[white, line width = #2] (1, -1) -- (1, 1);											% Invisible border #2
+		\def\var{#3}
+		\def\Noord{niet}
+		\ifx\var\Noord
+			\draw[black, line width = #2] (0,-1) -- (0,0);											% Startlijn
+			\filldraw[black] (0,0) circle (0.41pt);													% Elleboog
+			\filldraw[black] (0,-1) circle (2pt);													% Beginpunt
+			\draw[black, line width = #2, -{Latex[scale=(1.5)]}] (0,0) -- ({sin(#1)},{cos(#1)});	% Pijl
+			\else
+				\draw[black, line width = #2, -{Latex[scale=(1.5)]}] (0,0) -- ({sin(#1+#3)},{cos(#1+#3)});	% Pijl
+				\node[draw, single arrow, minimum height=#2*8mm, minimum width=#2*3mm, single arrow head extend=2*#2mm, anchor=west, rotate=90-#3] at (0,0) {};															% Noordpijl
+		\fi
+		\node[align=right] at (-0.9, 0.9) [fontscale = #2] {\arabic{kruising}.};
+	\end{tikzpicture}
+	\stepcounter{kruising}
+}
+
+% Bolletje-pijlte
+\NewDocumentCommand{\bolpijl}{ m O{2}}{
+	\begin{tikzpicture}[scale=#2]
+		\draw[white, line width = #2] (-1, -1) -- (-1, 1);											% Invisible border
+		\draw[white, line width = #2] (1, -1) -- (1, 1);											% Invisible border #2
+		
+		\draw[black, line width = #2, -{Straight Barb[scale=(1.5)]}] (0,0) -- ({.8*sin(#1)},{.8*cos(#1)});	% Pijl
+		\draw[fill=white](0,0) circle (4pt);														% Beginpunt
+		\node[align=right] at (-0.9, 0.9) [fontscale = #2] {\arabic{kruising}.};
+	\end{tikzpicture}
+	\stepcounter{kruising}
+}
+
+
+
+
+% Strippenkaart
+\def\stripscale{1.5}
+
+\NewDocumentEnvironment{strippenkaart}{ O{1} } {\begin{center}\begin{tikzpicture}[scale=#1]
+	\newcounter{strip}\setcounter{strip}{1}
+	\filldraw[black] (0, 0) circle (3pt);}{%
+	\draw[black, line width = #1] (0, 0) -- (0, \stripscale*\arabic{strip});
+	\draw[black, line width = #1 * 2] (-1.5, \stripscale*\arabic{strip}) -- (1.5, \stripscale*\arabic{strip});
+	\end{tikzpicture}\end{center}}
+
+\NewDocumentCommand{\strip}{ O{0} O{0} O{1} }{
+	\forloop{stripc}{0}{\value{stripc} < #1}{
+		\def\arc{180/(#1+1)*(\arabic{stripc}+1)}
+		\draw[black, line width = #3] (0, \stripscale*\arabic{strip}) -- ({-1*sin(\arc)}, {\stripscale*\arabic{strip} + cos(\arc)});
+	}
+	\forloop{stripc}{0}{\value{stripc} < #2}{
+		\def\arc{180/(#2+1)*(\arabic{stripc}+1)}
+		\draw[black, line width = #3] (0, \stripscale*\arabic{strip}) -- ({1*sin(\arc)}, {\stripscale*\arabic{strip} + cos(\arc)});
+	}
+	\node[align=right] at (-1.4, \stripscale*\arabic{strip}) [fontscale = #3] {\arabic{kruising}.};
+	\stepcounter{strip}
+	\stepcounter{kruising}
+}
+
+\NewDocumentCommand{\striptext}{ m }{
+	\node[anchor = west] at (0, \stripscale*\arabic{strip}) {#1};
+	\stepcounter{strip}
+}
+
+
+
+% Custom
+\NewDocumentCommand{\foto}{ m O{2} } {
+	\begin{tikzpicture}[scale = #2]
+		\draw[white, line width = #2] (-1.5, -1.5) -- (-1.5, 1.5);
+		\draw[white, line width = #2] (1.5, -1.5) -- (1.5, 1.5);
+		\node[anchor=north,inner sep=0] at (0,1.5) {\includegraphics[width = \the\numexpr #2 * 3 \relax cm, height = \the\numexpr #2 * 3 \relax cm, keepaspectratio]{#1}};
+		\node[align=right] at (-1.8, 1.3) [fontscale = #2] {\arabic{kruising}.};
+	\end{tikzpicture}
+	\stepcounter{kruising}
+}
+
+\NewDocumentCommand{\text}{ m } {
+	\\\arabic{kruising}. #1
+	\stepcounter{kruising}
+}
