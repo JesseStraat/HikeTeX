@@ -1,6 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{HikeTeX}[2019/10/12 Hike Package]
+\ProvidesPackage{HikeTeX}[2022/07/06 Hike Package]
 \RequirePackage{tikz}
+\RequirePackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
 \RequirePackage{xparse}
 \RequirePackage{relsize}
 \RequirePackage{forloop}
@@ -68,14 +71,14 @@
 	\draw[black, line width = #1 * 2] (-1.5, \stripscale*\arabic{strip}) -- (1.5, \stripscale*\arabic{strip});
 	\end{tikzpicture}\end{center}}
 
-\NewDocumentCommand{\strip}{ O{0} O{0} O{1} }{
+\NewDocumentCommand{\strip}{ O{0} O{0} O{1} O{} }{
 	\forloop{stripc}{0}{\value{stripc} < #1}{
 		\def\arc{180/(#1+1)*(\arabic{stripc}+1)}
-		\draw[black, line width = #3] (0, \stripscale*\arabic{strip}) -- ({-1*sin(\arc)}, {\stripscale*\arabic{strip} + cos(\arc)});
+		\draw[#4, black, line width = #3] (0, \stripscale*\arabic{strip}) -- ({-1*sin(\arc)}, {\stripscale*\arabic{strip} + cos(\arc)});
 	}
 	\forloop{stripc}{0}{\value{stripc} < #2}{
 		\def\arc{180/(#2+1)*(\arabic{stripc}+1)}
-		\draw[black, line width = #3] (0, \stripscale*\arabic{strip}) -- ({1*sin(\arc)}, {\stripscale*\arabic{strip} + cos(\arc)});
+		\draw[#4, black, line width = #3] (0, \stripscale*\arabic{strip}) -- ({1*sin(\arc)}, {\stripscale*\arabic{strip} + cos(\arc)});
 	}
 	\node[align=right] at (-1.4, \stripscale*\arabic{strip}) [fontscale = #3] {\arabic{kruising}.};
 	\stepcounter{strip}
