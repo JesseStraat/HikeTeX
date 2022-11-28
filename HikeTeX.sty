@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{HikeTeX}[2022/07/06 Hike Package]
+\ProvidesPackage{HikeTeX}[2022/11/28 Hike Package]
 \RequirePackage{tikz}
 \RequirePackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
@@ -93,12 +93,12 @@
 
 
 % Custom
-\NewDocumentCommand{\foto}{ m O{2} } {
-	\begin{tikzpicture}[scale = #2]
-		\draw[white, line width = #2] (-1.5, -1.5) -- (-1.5, 1.5);
-		\draw[white, line width = #2] (1.5, -1.5) -- (1.5, 1.5);
-		\node[anchor=north,inner sep=0] at (0,1.5) {\includegraphics[width = \the\numexpr #2 * 3 \relax cm, height = \the\numexpr #2 * 3 \relax cm, keepaspectratio]{#1}};
-		\node[align=right] at (-1.8, 1.3) [fontscale = #2] {\arabic{kruising}.};
+\NewDocumentCommand{\foto}{ O{} m O{2} } {
+	\begin{tikzpicture}[scale = #3]
+		\draw[white] (-1.5, -1.5) -- (-1.5, 1.5);
+		\draw[white] (1.5, -1.5) -- (1.5, 1.5);
+		\node[anchor=north,inner sep=0] at (0,1.5) {\includegraphics[#1, width = #3\dimexpr(3 cm)\relax, height = #3\dimexpr(3 cm)\relax, keepaspectratio]{#2}};
+		\node[align=right] at (-1.8, 1.3) {\arabic{kruising}.};
 	\end{tikzpicture}
 	\stepcounter{kruising}
 }
